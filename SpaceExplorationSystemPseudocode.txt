@@ -1,0 +1,747 @@
+BEGIN CLASS Mission 
+    missionName (string)
+    missionCode (string) 
+    destinationPlanet (string)
+    launchYear (integer)
+    successRate (double)
+    missionManned (boolean)
+    astronauts (Astronaut[])
+
+    ACCESSOR: getMissionName
+    IMPORT: none
+    EXPORT: missionName (string)
+    ASSERTION: returns copy of missionName
+    ALGORITHM: 
+        RETURN COPY OF missionName
+    END ACCESSOR
+
+    ACCESSOR: getMissionCode
+    IMPORT: none
+    EXPORT: missionCode (string)
+    ASSERTION: returns copy of missionCode
+    ALGORITHM:
+        RETURN COPY OF missionCode
+    END ACCESSOR
+
+    ACCESSOR: getDestinationPlanet
+    IMPORT: none
+    EXPORT: destinationPlanet (string)
+    ASSERTION: returns copy of destinationPlanet
+    ALGORITHM: 
+        RETURN COPY OF destinationPlanet
+    END ACCESSOR 
+
+    ACCESSOR: getLaunchYear
+    IMPORT: none 
+    EXPORT: launchYear (integer)
+    ASSERTION: returns copy of launchYear
+    ALGORITHM: 
+        RETURN COPY OF launchYear
+    END ACCESSOR
+
+    ACCESSOR: getSuccessRate
+    IMPORT: none 
+    EXPORT: successRate (double)
+    ASSERTION: returns copy of successRate
+    ALGORITHM: 
+        RETURN COPY OF successRate
+    END ACCESSOR 
+
+    ACCESSOR: getMissionManned 
+    IMPORT: none 
+    EXPORT: missionManned (boolean)
+    ASSERTION: returns copy of missionManned
+    ALGORITHM: 
+        RETURN COPY OF missionManned
+    END ACCESSOR 
+
+    ASSESSOR: getAstronaut
+    IMPORT: none
+    EXPORT: astronauts (Astronaut[])
+    ASSERTION: returns copy of astronauts
+    ALGORITHM:
+        RETURN COPY OF astronauts
+    END ACCESSOR
+
+
+    MUTATOR: setMissionName
+    IMPORT: pMissionName (string)
+    EXPORT: none 
+    ASSERTION: value of missionName updated to pMissionName
+    ALGORITHM: 
+        IF pMissionName != NULL AND pMissionName != "" THEN 
+            missionName = pMissionName
+        ELSE 
+            OUTPUT "Mission name field is empty." 
+        ENDIF 
+    END MUTATOR 
+
+    MUTATOR: setMissionCode 
+    IMPORT: pMissionCode (string) 
+    EXPORT: none 
+    ASSERTION: value of missionCode updated to pMissionCode
+    ALGORITHM: 
+        IF pMissionCode != NULL AND pMissionCode != "" THEN 
+            missionCode = pMissionCode
+        ELSE 
+            OUTPUT "Mission code field is empty."
+        ENDIF
+    END MUTATOR
+
+    MUTATOR: setDestinationPlanet 
+    IMPORT: pDestinationPlanet (string) 
+    EXPORT: none 
+    ASSERTION: value of destinationPlanet updated to pDestinationPlanet
+    ALGORITHM: 
+        IF pDestinationPlanet != NULL AND pDestinationPlanet != "" THEN 
+            destinationPlanet = pDestinationPlanet
+        ELSE 
+            OUTPUT "Destination field is empty." 
+        ENDIF 
+    END MUTATOR
+
+    MUTATOR: setLaunchYear
+    IMPORT: pLaunchYear (integer) 
+    EXPORT: none 
+    ASSERTION: value of launchYear updated to pLaunchYear
+    ALGORITHM: 
+        IF pLaunchYear >= 1900 AND pLaunchYear <= 2100 THEN 
+            launchYear = pLaunchYear
+        ELSE 
+            OUTPUT "Launch year not in range (1900-2100)."
+        ENDIF 
+    END MUTATOR 
+
+    MUTATOR: setSuccessRate
+    IMPORT: pSuccessRate (double)
+    EXPORT: none 
+    ASSERTION: value of successRate updated to pSuccessRate
+    ALGORITHM: 
+        IF pSuccessRate >= 0.0 AND pSuccessRate <= 100.0 THEN 
+            successRate = pSuccessRate
+        ELSE 
+            OUPUT "Success rate is an invalid percentage."
+        ENDIF 
+    END MUTATOR 
+
+    MUTATOR: setMissionManned 
+    IMPORT: pMissionManned (boolean) 
+    EXPORT: none 
+    ASSERTION: value of missionManned updated to pMissionManned
+    ALGORITHM: 
+        missionManned = pMissionManned
+    END MUTATOR 
+
+    MUTATOR: setAstronauts
+    IMPORT: pAstronauts (Astronaut[])
+    EXPORT: none
+    ASSERTION: value of astronauts updated to pAstronauts
+    ALGORITHM:
+        astronauts = pAstronauts
+
+    CONSTRUCTOR WITH PARAMETERS FOR UNMANNED MISSIONS
+    IMPORT: pMissionName (string), pMissionCode (string), pDestinationPlanet (string), pLaunchYear (integer), pSuccessRate (double), pMissionManned (boolean)
+    EXPORT: none 
+    ASSERTION: created mission with imported values 
+    ALGORITHM: 
+        setMissionName(pMissionName)
+        setMissionCode(pMissionCode)
+        setDestinationPlanet(pDestinationPlanet)
+        setLaunchYear(pLaunchYear)
+        setSuccessRate(pSuccessRate)
+        setMissionManned(pMissionManned)
+    END CONSTRUCTOR 
+
+    CONSTRUCTOR WITH PARAMETERS FOR MANNED MISSIONS
+    IMPORT: pMissionName (string), pMissionCode (string), pDestinationPlanet (string), pLaunchYear (integer), pSuccessRate (double), pMissionManned (boolean), pAstronauts (Astronaut[])
+    EXPORT: none 
+    ASSERTION: created mission with imported values 
+    ALGORITHM: 
+        setMissionName(pMissionName)
+        setMissionCode(pMissionCode)
+        setDestinationPlanet(pDestinationPlanet)
+        setLaunchYear(pLaunchYear)
+        setSuccessRate(pSuccessRate)
+        setMissionManned(pMissionManned)
+        setAstronauts(pAstronauts)
+    END CONSTRUCTOR 
+
+    METHOD toCSV
+    IMPORT: none
+    EXPORT: STRING OF MISSION INFORMATION
+    ASSERTION: creates a string for missions to be printed in the CSV file.
+    ALGORITHM:
+        astronautInfo = ""
+        IF missionManned AND astronauts NOT EQUAL NULL THEN
+            FOR i = 0 TO astronauts.length CHANGEBY i++
+                IF astronaut[i] NOT EQUAL NULL THEN
+                    astronautInfo += astronaut[i].toCSV() + "|"
+                END IF 
+            END FOR 
+            IF astronautInfo NOT EMPTY THEN
+                astronautInfo = astronautInfo.substring(0, astronautInfo.length() - 1)
+            END IF 
+        END IF 
+        RETURN missionName + "," + missionCode + "," + destinationPlanet + "," + launchYear + "," + successRate + "," + missionManned + "," + astronautInfo
+    END toCSV
+
+    METHOD: toString 
+    IMPORT: none
+    EXPORT: missionString (String)
+    ASSERTION: creates a string to be printed in the terminal.
+    ALGORITHM:
+        missionString = "Mission name is: " + missionName + "\nMission code is: " + missionCode + "\nDestination planet is: " + destinationPlanet + "\nLaunch year is: " + launchYear + "\nSuccess rate is: " + successRate + "\nMission manned: " + missionManned;
+    END toString 
+
+END Mission
+
+BEGIN CLASS Astronaut
+    astronautName (string)
+    astronautRole (string) 
+    astronautAge (integer) 
+    astronautNationality (string)
+
+    ACCESSOR: getAstronautName
+    IMPORT: none
+    EXPORT: astronautName (string)
+    ASSERTION: returns copy of astronautName
+    ALGORITHM: 
+        RETURN COPY OF astronautName
+    END ACCESSOR
+
+    ACCESSOR: getAstronautRole
+    IMPORT: none
+    EXPORT: astronautRole (string)
+    ASSERTION: returns copy of astronautRole
+    ALGORITHM: 
+        RETURN COPY OF astronautRole
+    END ACCESSOR
+
+    ACCESSOR: getAstronautAge
+    IMPORT: none
+    EXPORT: astronautAge (integer)
+    ASSERTION: returns copy of astronautAge
+    ALGORITHM: 
+        RETURN COPY OF astronautAge
+    END ACCESSOR
+
+    ACCESSOR: getAstronautNationality
+    IMPORT: none
+    EXPORT: astronautNationality (string)
+    ASSERTION: returns copy of astronautNationality
+    ALGORITHM: 
+        RETURN COPY OF astronautNationality
+    END ACCESSOR
+
+    MUTATOR: setAstronautName
+    IMPORT: pAstronautName (string)
+    EXPORT: none 
+    ASSERTION: value of astronautName updated to pAstronautName
+    ALGORITHM: 
+        IF pAstronautName != NULL AND pAstronautName != "" THEN 
+            astronautName = pAstronautName
+        ELSE 
+            OUTPUT "Astronaut name field is empty." 
+        ENDIF 
+    END MUTATOR 
+
+    MUTATOR: setAstronautRole
+    IMPORT: pAstronautRole (string)
+    EXPORT: none 
+    ASSERTION: value of astronautRole updated to pAstronautRole
+    ALGORITHM: 
+        IF pAstronautRole != NULL AND pAstronautRole != "" THEN 
+            astronautRole = pAstronautRole
+        ELSE 
+            OUTPUT "Astronaut role field is empty." 
+        ENDIF 
+    END MUTATOR 
+
+    MUTATOR: setAstronautAge
+    IMPORT: pAstronautAge (integer)
+    EXPORT: none 
+    ASSERTION: value of astronautAge updated to pAstronautAge
+    ALGORITHM: 
+        IF pAstronautAge >= 18 AND pAstronautAge <= 65 THEN 
+            astronautAge = pAstronautAge
+        ELSE 
+            OUTPUT "Astronaut age is invalid" 
+        ENDIF 
+    END MUTATOR 
+
+    MUTATOR: setAstronautNationality
+    IMPORT: pAstronautNationality (string)
+    EXPORT: none 
+    ASSERTION: value of astronautNationality updated to pAstronautNationality
+    ALGORITHM: 
+        IF pAstronautNationality != NULL AND pAstronautNationality != "" THEN
+            astronautNationality = pAstronautNationality
+        ELSE 
+            OUTPUT "Astronaut nationality's field is empty." 
+        ENDIF 
+    END MUTATOR 
+
+    CONSTRUCTOR WITH PARAMETERS 
+    IMPORT: pAstronautName (string), pAstronautRole (string), pAstronautAge (integer), pAstronautNationality (string)
+    EXPORT: none 
+    ASSERTION: created astronaut with imported values 
+    ALGORITHM: 
+        setAstronautName(pAstronautName)
+        setAstronautRole(pAstronautRole)
+        setAstronautAge(pAstronautAge)
+        setAstronautNationality(pAstronautNationality)
+    END CONSTRUCTOR 
+
+    METHOD: toString 
+    IMPORT: none
+    EXPORT: missionString (String)
+    ALGORITHM:
+        astronautString = "Astronaut name: " + astronautName + "\nRole: " + astronautRole + "\nAge: " + astronautAge + "\nNationality: " + astronautNationality;
+    END toString
+
+END Astronaut
+
+BEGIN CLASS MissionController
+    numOfMissions = 0
+
+    METHOD: storeInArray
+    IMPORT: pDataFile (String)
+    EXPORT: missions (Mission[])
+    ASSERTION: Read data from CSV file and stroe in an array of Mission objects
+    ALGORITHM:
+        FILEINPUTSTREAM fileStream = NULL
+        INPUTSTREAMREADER reader 
+        BUFFEREDREADER bufferedReader
+        STRING line
+        MISSION[] missions = NEW Mission[100]
+
+        fileStream = NEW FileInputStream(pDataFile)
+        reader = NEW InputStreamReader(fileStream)
+        bufferedReader = NEW BufferedReader(reader)
+        numOfMissions = 0 
+        line = bufferedReader.readLine()
+
+        WHILE line = bufferedReader.readLine() NOT EQUAL NULL DO 
+            String[] missionParts = line SPLIT AT "," 
+            ASTRONAUT[] missionAstronauts = NEW Astronaut[0]
+
+            IF missionParts[6] IS EMPTY THEN 
+                missionAstronauts = NEW Astronaut[0]
+            ELSE 
+                String[] numberOfAstronauts = missionParts[6] SPLIT AT "|"
+                missionAstronauts = new Astronaut[numberOfAstronauts.length]
+
+                FOR i = 0 TO numberOfAstronauts.length CHANGEBY i++
+                    STRING[] astronautParts = numberOfAstronauts[i] SPLIT AT ":"
+                    missionAstronauts[i] = NEW Astronaut(astronautParts[0], astronaut[1], PARSE INTEGER astronautParts[2], astronautParts[3])
+                END FOR 
+            END IF 
+
+            missions[numOfMissions++] = NEW Mission(missionParts[0], missionParts[1], missionParts[2], PARSE INTERGER missionParts[3], PARSE DOUBLE missionParts[4], PARSE BOOLEAN missionParts[5], missionAstronauts)
+        END WHILE
+        CLOSE fileStream
+
+        RETURN missions 
+    END storeInArray
+
+    METHOD: readFile 
+    IMPORT: pDataFile (String)
+    EXPORT: none 
+    ASSERTION: reads given file 
+    ALGORITHM: 
+        FILEINPUTSTREAM fileStream = NULL
+        INPUTSTREAMREADER reader 
+        BUFFEREDREADER bufferedReader
+        STRING line
+
+        fileStream = NEW FileInputStream(pDataFile)
+        reader = NEW InputStreamReader(fileStream)
+        bufferedReader = NEW BufferedReader(reader)
+        line = bufferedReader.readLine()
+
+        WHILE line NOT EQUAL NULL DO 
+            PRINT line 
+            line = bufferedReader.readLine()
+        END WHILE 
+        CLOSE fileStream 
+    END readFile 
+
+    METHOD: mannedMission
+    IMPORT: missions (Mission[])
+    EXPORT: none
+    ASSERTION: Prints all manned missions 
+    ALGORITHM: 
+        FOR i = 0 TO missions.length CHANGEBY i++ 
+            IF missions[i] NOT EQUAL NULL 
+                IF missions[i].getMissionManned
+                    MISSION mission = missions[i]
+                    PRINT missions[i] + "\n" 
+                    IF mission.getAstronaut NOT EQUAL NULL 
+                        PRINT "Astronauts part of " + missions[i].getMissionName + ":"
+                        FOR ASTRONAUT astronaut : mission.getAstronaut
+                            IF astronaut NOT EQUAL NULL
+                                PRINT astronaut + "\n"
+                            END IF 
+                        END FOR 
+                    END IF 
+                END IF 
+            END IF 
+        END FOR 
+    END mannedMission
+
+    METHOD: unmannedMission 
+    IMPORT: missions (Mission[])
+    EXPORT: none 
+    ASSERTION: Prints all unmanned missions 
+    ALGORITHM: 
+        FOR i = 0 TO missions.length CHANGEBY i++
+            IF missions[i] NOT EQUAL NULL 
+                IF NOT missions[i].getMissionManned
+                    PRINT missions[i] + "\n"
+                END IF 
+            END IF 
+        END FOR 
+    END unmannedMission
+
+    METHOD: findAstronauts
+    IMPORT: missions (Mission[])
+    EXPORT: none 
+    ASSERTION: Prints the astronauts from a given mission
+    ALGORITHM: 
+        missionAstronaut <- ASK "Which mission's Astronaut would you like to view? "
+
+        FOR i = 0 TO missions.length CHANGEBY i++
+            MISSION mission = missions[i]
+            IF mission NOT EQUAL NULL 
+                IF mission.getMissionCode OR mission.getMissionName EQUAL missionAstronaut
+                    IF mission.getMissionManned AND mission.getAstronaut NOT EQUAL NULL
+                        PRINT "Astronauts in " + mission.getMissionName + ":"
+
+                        FOR ASTRONAUT astronauts : mission.getAstronaut
+                            IF astronauts NOT EQUAL NULL 
+                                PRINT astronauts + "\n"
+                            END IF 
+                        END FOR 
+                    ELSE 
+                        PRINT "\nMission is unmanned.\n"
+                    END IF 
+                END IF 
+            END IF 
+        END FOR 
+    END findAstronauts
+
+    METHOD: missionObject 
+    IMPORT: none 
+    EXPORT: adventures (Mission)
+    ASSERTION: Creates a mission object
+    ALGORITHM: 
+        missionName <- ASK "Enter mission name: "
+        missionCode <- ASK "Enter mission code: "
+        destinationPlanet <- ASK "Enter destination planet: " 
+        launchYear <- ASK "Enter launch year: " 
+        successRate <- ASK "Enter success rate: "
+        missionManned <- ASK "Is the mission manned? " 
+
+        MISSION adventures = NEW Mission(missionName, missionCode, destinationPlanet, launchYear, successRate, isManned(missionManned))
+
+        RETURN adventures
+    END missionObject 
+
+    METHOD: isManned 
+    IMPORT: isManned (Boolean)
+    EXPORT: manned (Boolean)
+    ASSERTION: Determines whether mission is manned or unmanned 
+    ALGORITHM: 
+        IF isManned EQUALS "yes" OR isManned EQUALS "true" 
+            manned = true 
+            RETURN manned
+        ELSE 
+            manned = false 
+            RETURN manned 
+        END IF 
+    END isManned 
+
+    METHOD: astronautArray 
+    IMPORT: none
+    EXPORT: astronauts (Astronaut[])
+    ASSERTION: Creates a new Astronaut array 
+    ALGORITHM:
+        numberOfAstronauts <- ASK "How many astronauts are part of this mission? " 
+
+        ASTRONAUT[] astronauts = NEW Astronaut[numberOfAstronauts]
+
+        FOR i = 0 TO numberOfAstronauts CHANGEBY i++ 
+            name <- "Enter name: " 
+            role <- "Enter role: " 
+            age <- "Enter age: "
+            nationality <- "Enter nationality: "
+
+            astronauts[i] = NEW Astronaut(name, role, age, nationality)
+        END FOR 
+
+        RETURN astronauts
+    END astronautArray 
+
+    METHOD: addMissiondetails 
+    IMPORT: filename (String), adventures (Mission[])
+    EXPORT: none
+    ASSERTION: Writes user input into the file using mission array.
+    ALGORITHM: 
+        FILEOUTPUTSTREAM fileStream = NULL
+        PRINTWRITER pw 
+
+        fileStream = NEW FileOutputStream(fileName)
+        pw = NEW PrintWriter(fileName)
+        pw PRINT "Mission Name,Mission Code,Destination Planet,Launch Year,Success Rate,Manned Mission,Astronauts" 
+        FOR MISSION mission : adventures
+            IF mission NOT EQUAL NULL THEN 
+                pw PRINT mission.toCSV() + "\n"
+            END IF 
+        END FOR 
+
+        CLOSE pw
+    END addMissiondetails
+
+    METHOD addMissiondetails
+    IMPORT: filename (String), adventures (Mission)
+    EXPORT: none 
+    ASSERTION: If mission is unmanned then this method writes mission object into the file. 
+    ALGORITHM: 
+        FILEOUTPUTSTREAM fileSteam = NULL
+        PRINTWRITER pw
+
+        fileStream = NEW FileOutputStream(fileName, true)
+        pw = NEW PrintWriter(fileStream)
+        pw PRINT " "
+        pw PRINT adventures.toCSV
+        CLOSE pw
+    END addMissiondetails
+
+    METHOD: editMission
+    IMPORT: pDatafile (String), missionArray (Mission[])
+    EXPORT: none
+    ASSERTION: Edit missions that already exist
+    ALGORITHM: 
+        missionToEdit <- ASK "What is the name of the mission you wish to edit? " 
+        found = false 
+
+        i = 0 
+        matchIndex = -1 
+
+        WHILE i <= missionArray.length - 1 AND matchIndex EQUALS -1 DO 
+            IF missionArray[i].getMissionName EQUALS missionToEdit THEN
+                PRINT "Found: " + "\n" + missionArray[i]
+
+                newName <- ASK "Enter new mission name: "
+                missionArray[i].setMissionName(newName)
+
+                newCode <- ASK "Enter new mission code: "
+                missionArray[i].setMissionCode(newCode)
+
+                newDestination <- ASK "Enter new destination: " 
+                missionArray[i].setDestinationPlanet(newDestination)
+
+                newLaunchYear <- ASK "Enter new launch year: " 
+                missionArray[i].setLaunchYear(newLaunchYear)
+
+                newSuccessRate <- ASK "Enter new success rate: " 
+                missionArray[i].setSuccessRate(newSuccessRate)
+
+                newMannedStatus <- ASK "mission is manned (true or false): "
+                missionArray[i].setMissionManned(newMannedStatus)
+
+                MISSION mission = missionArray[i]
+                    IF mission NOT EQUAL NULL THEN 
+                        IF mission.getMissionManned AND mission.getAstronaut NOT EQUAL NULL THEN 
+                            ASTRONAUT[] newAstronauts = astronautArray()
+                            mission.setAstronauts(newAstronauts)
+                        END IF 
+                    END IF 
+                missionArray[i] = mission
+
+                found = true 
+                matchIndex = i 
+            END IF 
+             i++
+        END WHILE 
+
+        IF FOUND EQUALS FALSE THEN
+            PRINT "Cannot find Mission."
+            RETURN 
+        END IF 
+
+        addMissiondetails(pDataFile, missionArray)
+    END editMission
+
+    METHOD: missionSummary
+    IMPORT: missions (Mission[])
+    EXPORT: none 
+    ASSERTION: 
+    ALGORITHM: 
+        DOUBLE[] successRates = NEW double[missions.length]
+        sum = 0.0 
+
+        FOR i = 0 TO numOfMissions CHANGEBY i++
+            IF mission[i] NOT EQUAL NULL THEN 
+                successRate[i] = missions[i].getSuccessRate()
+            END IF 
+        END FOR 
+
+        FOR j = 0 TO numberOfMissions CHANGEBY j++
+            sum += successRate[j]
+        END FOR 
+
+        average = sum/numOFMissions
+        PRINT "The average success rate is: " + average + "%" 
+        DOUBLE[] sortedRates = sortedRates(successRate)
+        PRINT "The highest success rate is: " + sortedRates[0] + "%"
+        PRINT "The lowest success rate is: " + sortedRates[numOfMissions - 1] + "%"
+    END missionSummary 
+
+    METHOD: sortedRates
+    IMPORT: successRates (double[])
+    EXPORT: successRates (double[])
+    ASSERTION: Selection sort largest to smallest
+    ALGORITHM: 
+        FOR i = 0 TO numOfMissions CHANGEBY i++
+            maxIndex = i 
+            FOR  j = (i + 1) TO numOfMissions CHANGEBY j++
+                IF successRate[j] > successRates[maxIndex] THEN
+                    maxIndex = j
+                END IF 
+            END FOR 
+            temp = successRates[maxIndex]
+            successRates[maxIndex] = successRates[i]
+            successRates[i] = temp
+        END FOR 
+        RETURN successRates
+    END sortedRates 
+
+    METHOD: findNationality 
+    IMPORT: missions (Mission[])
+    EXPORT: none 
+    ASSERTION: Show all astronauts for a given nationality 
+    ALGORITHM: 
+        missionAstronaut <- ASK "Which nationality are you searching for? "
+        found = false 
+        
+        FOR i = 0 TO numOfMissions CHANGEBY i++ 
+            MISSION mission = mission[i]
+            IF mission.getMissionManned AND mission.getAstronaut NOT EQUAL NULL THEN 
+                FOR ASTRONAUT astronaut : mission.getAstronaut
+                    IF astronaut.getAstronautNationality EQUALS missionAstronaut 
+                        PRINT astronaut + "\n"
+                        found = true 
+                    END IF 
+                END FOR 
+            END IF 
+        END FOR 
+
+        IF found EQUAL FALSE 
+            PRINT "No astronaut found from: " + missionAstronaut
+        END IF 
+    END findNationality
+END MissionController 
+
+BEGIN MENU SpaceExplorationSystem 
+    MAIN: 
+        MISSION[] missionArray 
+
+        DO 
+            userChoice <- userChoice()
+
+            IF userChoice > 0 AND userChoice <= 9
+                SWITCH userChoice 
+                    CASE 1: 
+                        fileChoice <- chooseFile()
+
+                        MissionController.readFile(fileChoice)
+                        PRINT " "
+                    CASE 2: 
+                        fileChoice <- chooseFile()
+
+                        missionArray = MissionController.storeInArray(fileChoice)
+                        MissionController.mannedMissions(missionArray)
+                        PRINT " "
+                    CASE 3: 
+                        fileChoice <- chooseFile()
+
+                        missionArray = MissionController.storeInArray(fileChoice)
+                        MissionController.unmannedMissions(missionArray)
+                        PRINT " "
+                    CASE 4: 
+                        fileChoice <- chooseFile()
+
+                        missionArray = MissionController.storeInArray(fileChoice)
+                        MissionController.findAstronauts(missionArray)
+                        PRINT " "
+                    CASE 5: 
+                        fileChoice <- chooseFile()
+
+                        ASTRONAUT[] astronautArray = NULL 
+                        MISSION missionObject = MissionController.missionObject()
+                            IF missionObject.getMissionManned EQUAL true 
+                                astronautArray = MissionController.astronautArray()
+                                missionObject.setAstronaut(astronautArray)
+                                MissionController.addMissiondetails(fileChoice, missionObject)
+                            ELSE 
+                                MissionController.addMissiondetails(fileChoice, missionObject)
+                            END IF 
+                        MissionController.storeInArray(fileChoice)
+                        PRINT " "
+                    CASE 6: 
+                        fileChoice <- chooseFile()
+
+                        missionArray = MissionController.storeInArray(fileChoice)
+                        MissionController.editMission(missionArray)
+                        PRINT " "
+                    CASE 7: 
+                        fileChoice <- chooseFile()
+
+                        missionArray = MissionController.storeInArray(fileChoice)
+                        MissionController.missionSummary(missionArray)
+                        PRINT " "
+                    CASE 8: 
+                        fileChoice <- chooseFile()
+
+                        missionArray = MissionController.storeInArray(fileChoice)
+                        MissionController.findNationality(missionArray)
+                        PRINT " "
+                END SWITCH 
+            ELSE 
+                PRINT "Please enter a number between 1-9\n"
+            END IF 
+        WHILE userChoice NOT EQUAL 9 
+        END DO-WHILE 
+    END MAIN 
+
+    METHOD: userChoice 
+    IMPORT: none 
+    EXPORT: none 
+    ASSERTION: Print all user choices in menu 
+    ALGORITHM: 
+        PRINT "Welcome to Mission Command!"
+        PRINT "Please select what you would like to do: "
+        PRINT "1> View all missions."
+        PRINT "2> View all manned missions."
+        PRINT "3> View all unmanned missions."
+        PRINT "4> View a mission's astronauts."
+        PRINT "5> Add a new mission."
+        PRINT "6> Edit an existing mission."
+        PRINT "7> Summary of missions' success rates (average, highest, lowest)."
+        PRINT "8> List astronauts for a given nationality."
+        PRINT "9> Exit Contoller"
+    END userChoice 
+
+    METHOD: chooseFile 
+    IMPORT: none 
+    EXPORT: none 
+    ASSERTION: print file choice prompt
+    ALGORITHM: 
+        PRINT "Which file would you like to use? " 
+    END chooseFile 
+END SpaceExplorationSystem
+
+
+
+
