@@ -139,9 +139,3 @@ Example entries:
 ## Author
 
 **Bhagwat Patel**
-- Student ID: 22871631
-- Course: PDI (Programming for Data Informatics)
-- Date: April-May 2025
-
-This project was developed as part of a university assignment demonstrating object-oriented programming principles, file I/O operations, and data management in Java.</content>
-<parameter name="filePath">c:\Users\bhagw\OneDrive\Documents\University\PDI\PDI_Assignment_22871631_BhagwatPatel\README.md
